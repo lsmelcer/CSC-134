@@ -10,5 +10,8 @@ int main()
 {
     cout << "Hello" << endl;
     cout << endl;
+    cout << "I am committed to play baseball a Coe College." << endl;
+    cout << "Go Red Sox" << endl; 
+    cout << "The Seahawks make life not very fun." << endl; 
     return 0;
 }
