@@ -11,7 +11,6 @@ int main()
 {
     string name = "Smelcer";
     string customer_name;
-    int num_apples = 100;
     double price_each = 0.25;
     int customer_want;
 
@@ -22,7 +21,6 @@ int main()
     cout << endl;
     
     cout << "Welcome to the " << name << " Apple Farm." << endl;
-    cout << "We have " << num_apples << " apples in stock." << endl;
     cout << "Price per apple is: $" << price_each << endl;
     
     cout << endl;
