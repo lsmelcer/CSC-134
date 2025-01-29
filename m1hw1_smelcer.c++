@@ -14,9 +14,6 @@ int main()
     int releaseYear = 2005;
     double gross = 868.4;
 
-    string obi1Quote = "Hello, there.";
-    string obi2Quote = "You were the chosen one! It was said that you would *destroy* the Sith, not join them! Bring balance to the Force, not leave it in darkness!";
-
     cout << "The movie " << movieName << " came out in " << releaseYear << " and grossed $" << gross << " million." << endl;
     cout << endl;
     cout << "I have two personal favorite scenes, those being when Obi-Wan fought Grievous and when Obi-Wan fought Vader aka Anakin." << endl;
