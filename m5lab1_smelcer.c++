@@ -20,6 +20,7 @@ void choice_fake_valuables();
 void choice_all_valuables();
 void choice_peek_window();
 void choice_stay_put();
+int get_choice(int);
 // TODO: add more choices here
 
 int main() {
@@ -39,7 +40,7 @@ void main_menu() {
   cout << "4. [Quit]" << endl;
   cout << "Choose: ";
   int choice;
-  cin >> choice;
+  choice = get_choice(4);
   if (1 == choice) {
     choice_front_door();
   } else if (2 == choice) {
@@ -65,7 +66,7 @@ void choice_front_door() {
   cout << "3. Shut the door and stay home." << endl;
   int choice;
   cout << "Choose: ";
-  cin >> choice;
+  choice = get_choice(3);
   if (1 == choice) {
     choice_back_door();
   } else if (2 == choice) {
@@ -90,7 +91,7 @@ void choice_back_door() {
     cout << "3. Give all your valuables and money." << endl;
     int choice;
     cout << "Choose: ";
-    cin >> choice;
+    choice = get_choice(3);
     if (choice == 1) {
         choice_fight_back();
     } else if (choice == 2) {
@@ -145,7 +146,7 @@ void choice_stay_home() {
     cout << "3. Leave through the back door to get away from it." << endl;
     int choice;
     cout << "Choose: ";
-    cin >> choice;
+    choice = get_choice(3);
     if (choice == 1) {
         choice_peek_window();
     } else if (choice == 2) {
@@ -189,7 +190,7 @@ void front_door_2() {
     cout << "2. Take cover quickly and wait it out." << endl;
     int choice;
     cout << "Choose: ";
-    cin >> choice;
+    choice = get_choice(2);
     if (1 == choice) {
         choice_run_away();
     } else if (2 == choice) {
@@ -219,4 +220,19 @@ void choice_take_cover() {
     cout << "You successfully make it to work, and have a good shift." << endl;
     cout << "Game over." << endl;
     return;
+}
+
+int get_choice(int size) {
+  int choice=0;
+  while (choice < 1 || choice > size) {
+    cout << "Choose: ";
+    cin >> choice;
+        if (cin.fail()) {
+          cin.clear();
+          cin.ignore(99999, '\n');
+          cout << "Invalid input. Please enter a number between 1 and " << size << "," << endl;
+        }
+  }
+  cout << "you picked option #" << choice << endl;
+  return choice;
 }
