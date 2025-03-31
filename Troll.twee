@@ -1,0 +1,77 @@
+:: StoryTitle
+Troll
+
+
+:: StoryData
+{
+  "ifid": "19657FE2-EDF5-4FE6-AE86-90DF085CBC18",
+  "format": "Harlowe",
+  "format-version": "3.3.9",
+  "start": "Game Start",
+  "zoom": 1
+}
+
+
+:: Begin Adventure {"position":"375,150","size":"100,100"}
+Welcome, adventurer! I must warn you, there are many dangers which lie ahead, and you must be smart in getting past them. I have faith in you though, adventurer! Best of luck!
+[[Leave]]
+
+
+:: Create your character {"position":"50,150","size":"100,100"}
+Choose your character class
+[[Fighter]]
+[[Wizard]]
+[[Rogue]]
+
+
+:: Fighter {"position":"225,150","size":"100,100"}
+You have created a Fighter! Your stats are:
+Strength (STR): 10
+Dexterity (DEX): 7
+Intelligence (INT): 5
+Endurance (END): 8
+Charisma (CHA): 6
+[[Begin Adventure]]
+(set: $strength = 10)
+(set: $dexterity = 7)
+(set: $intelligence = 5)
+(set: $endurance = 8)
+(set: $charisma = 6)
+
+
+:: Game Start {"position":"50,25","size":"100,100"}
+[[Create your character]]
+
+
+:: Leave {"position":"375,275","size":"100,100"}
+You depart from the town, going on your merry way. As you continue on, you run into your first obstacle, //The Ironbound Sentinel//, and undead swordsman who patrols ancient ruins. 
+
+
+:: Rogue {"position":"225,275","size":"100,100"}
+You have created a Rogue! Your stats are:
+Strength (STR): 6
+Dexterity (DEX): 10
+Intelligence (INT): 8
+Endurance (END): 7
+Charisma (CHA): 5
+[[Begin Adventure]]
+(set: $strength = 6)
+(set: $dexterity = 10)
+(set: $intelligence = 8)
+(set: $endurance = 7)
+(set: $charisma = 5)
+
+
+:: Wizard {"position":"225,25","size":"100,100"}
+You have created a Wizard! Your stats are:
+Strength (STR): 6
+Dexterity (DEX): 8
+Intelligence (INT): 10
+Endurance (END): 7
+Charisma (CHA): 7
+[[Begin Adventure]]
+(set: $strength = 6)
+(set: $dexterity = 8)
+(set: $intelligence = 10)
+(set: $endurance = 7)
+(set: $charisma = 7)
