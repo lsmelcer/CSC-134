@@ -19,7 +19,7 @@ int spinRouletteWheel();
 
 // Function to display the menu
 void displayMenu() {
-    cout << "Welcome to the Casino!" << endl;
+    cout << "Welcome to the Diamond Shores Casino!" << endl;
     cout << "1. Blackjack" << endl;
     cout << "2. Craps" << endl;
     cout << "3. Roulette" << endl;
