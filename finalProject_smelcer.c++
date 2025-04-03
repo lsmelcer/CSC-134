@@ -19,21 +19,21 @@ int spinRouletteWheel();
 
 // Function to display the menu
 void displayMenu() {
-    std::cout << "Welcome to the Casino!" << std::endl;
-    std::cout << "1. Blackjack" << std::endl;
-    std::cout << "2. Craps" << std::endl;
-    std::cout << "3. Roulette" << std::endl;
-    std::cout << "4. Baccarat" << std::endl;
-    std::cout << "5. Slots" << std::endl;
-    std::cout << "6. Exit" << std::endl;
-    std::cout << "Please choose a game (1-6): ";
+    cout << "Welcome to the Casino!" << endl;
+    cout << "1. Blackjack" << endl;
+    cout << "2. Craps" << endl;
+    cout << "3. Roulette" << endl;
+    cout << "4. Baccarat" << endl;
+    cout << "5. Slots" << endl;
+    cout << "6. Exit" << endl;
+    cout << "Please choose a game (1-6): ";
 }
 
 // Function to get chips from the player
 int getChips() {
     int chips = 0;
-    std::cout << "Enter your initial amount of chips: ";
-    std::cin >> chips;
+    cout << "Enter your initial amount of chips: ";
+    cin >> chips;
     return chips;
 }
 
@@ -43,7 +43,7 @@ void playGame(int& chips) {
 
     while (true) {
         displayMenu();
-        std::cin >> choice;
+        cin >> choice;
 
         switch (choice) {
             case 1:
@@ -62,14 +62,14 @@ void playGame(int& chips) {
                 playSlots(chips);
                 break;
             case 6:
-                std::cout << "Thank you for playing! You leave with " << chips << " chips." << std::endl;
+                cout << "Thank you for playing! You leave with " << chips << " chips." << endl;
                 return; // Exit the game
             default:
-                std::cout << "Invalid choice. Please try again." << std::endl;
+                cout << "Invalid choice. Please try again." << endl;
         }
 
         if (chips <= 0) {
-            std::cout << "You ran out of chips! Game Over!" << std::endl;
+            cout << "You ran out of chips! Game Over!" << endl;
             return; // Exit if the player runs out of chips
         }
     }
@@ -78,16 +78,16 @@ void playGame(int& chips) {
 // Blackjack logic (stubbed for now)
 void playBlackjack(int& chips) {
     int bet;
-    std::cout << "How much would you like to bet on Blackjack? ";
-    std::cin >> bet;
+    cout << "How much would you like to bet on Blackjack? ";
+    cin >> bet;
 
     if (bet > chips) {
-        std::cout << "You don't have enough chips for that bet!" << std::endl;
+        cout << "You don't have enough chips for that bet!" << endl;
         return;
     }
 
     // Insert actual Blackjack logic here
-    std::cout << "You played Blackjack. You lost the bet!" << std::endl;
+    cout << "You played Blackjack. You lost the bet!" << endl;
     chips -= bet; // Update chip count (based on actual game result)
 }
 
@@ -99,11 +99,11 @@ void playCraps(int& chips) {
     int betAmount;
 
     // Ask the player to place a bet
-    std::cout << "You have $" << chips << " chips. Enter your bet amount: $";
-    std::cin >> betAmount;
+    cout << "You have $" << chips << " chips. Enter your bet amount: $";
+    cin >> betAmount;
 
     if (betAmount > chips) {
-        std::cout << "You don't have enough chips to place that bet!" << std::endl;
+        cout << "You don't have enough chips to place that bet!" << endl;
         return;  // Exit if the player doesn't have enough chips
     }
 
@@ -112,16 +112,16 @@ void playCraps(int& chips) {
     roll2 = (rand() % SIDES) + 1;
     total = roll1 + roll2;
 
-    std::cout << "You rolled " << roll1 << " + " << roll2 << " = " << total << std::endl;
+    cout << "You rolled " << roll1 << " + " << roll2 << " = " << total << endl;
 
     if (total == 7 || total == 11) {
-        std::cout << "You win!" << std::endl;
+        cout << "You win!" << endl;
         chips += betAmount;  // Add winnings to chips
     } else if (total == 2 || total == 3 || total == 12) {
-        std::cout << "You lose." << std::endl;
+        cout << "You lose." << endl;
         chips -= betAmount;  // Subtract the bet amount from chips
     } else {
-        std::cout << "Your point is " << total << std::endl;
+        cout << "Your point is " << total << endl;
         point = total;
 
         // Subsequent rolls
@@ -129,14 +129,14 @@ void playCraps(int& chips) {
             roll1 = (rand() % SIDES) + 1;
             roll2 = (rand() % SIDES) + 1;
             total = roll1 + roll2;
-            std::cout << "You rolled " << roll1 << " + " << roll2 << " = " << total << std::endl;
+            cout << "You rolled " << roll1 << " + " << roll2 << " = " << total << endl;
 
             if (total == point) {
-                std::cout << "You win!" << std::endl;
+                cout << "You win!" << endl;
                 chips += betAmount;  // Add winnings to chips
                 break;
             } else if (total == 7) {
-                std::cout << "You lose." << std::endl;
+                cout << "You lose." << endl;
                 chips -= betAmount;  // Subtract the bet amount from chips
                 break;
             }
@@ -144,7 +144,7 @@ void playCraps(int& chips) {
     }
 
     // Display updated chip balance
-    std::cout << "Your current chip balance is: $" << chips << std::endl;
+    cout << "Your current chip balance is: $" << chips << endl;
 }
 
 // Roulette logic (fixed)
@@ -153,13 +153,13 @@ int spinRouletteWheel() {
 }
 
 void playRoulette(int& chips) {
-    std::vector<int> betTypes;
-    std::vector<int> betNumbers;
-    std::vector<std::string> betColors;
-    std::vector<int> betAmounts;
+    vector<int> betTypes;
+    vector<int> betNumbers;
+    vector<string> betColors;
+    vector<int> betAmounts;
 
     int spunNumber;
-    std::string spunColor;
+    string spunColor;
     int betAmount;
     int betType;
 
@@ -168,37 +168,37 @@ void playRoulette(int& chips) {
     // Ask the player to place bets and choose bet types
     do {
         // Ask the player to place a bet amount
-        std::cout << "You have $" << chips << " chips. Enter your bet amount: $";
-        std::cin >> betAmount;
+        cout << "You have $" << chips << " chips. Enter your bet amount: $";
+        cin >> betAmount;
 
         // Check if the player has enough chips
         if (betAmount > chips) {
-            std::cout << "You don't have enough chips for that bet!" << std::endl;
+            cout << "You don't have enough chips for that bet!" << endl;
             continue;  // Prompt for bet amount again if player doesn't have enough chips
         }
 
         betAmounts.push_back(betAmount);
 
         // Ask the player to choose a bet type
-        std::cout << "Choose your bet type:\n";
-        std::cout << "1. Bet on a specific number (0-36)\n";
-        std::cout << "2. Bet on Red or Black\n";
-        std::cout << "3. Bet on 1st 12 (1-12)\n";
-        std::cout << "4. Bet on 2nd 12 (13-24)\n";
-        std::cout << "5. Bet on 3rd 12 (25-36)\n";
-        std::cout << "6. Bet on 1st 18 (1-18)\n";
-        std::cout << "7. Bet on 2nd 18 (19-36)\n";
-        std::cout << "8. Bet on Even\n";
-        std::cout << "9. Bet on Odd\n";
-        std::cout << "Enter your choice (1-9): ";
-        std::cin >> betType;
+        cout << "Choose your bet type:\n";
+        cout << "1. Bet on a specific number (0-36)\n";
+        cout << "2. Bet on Red or Black\n";
+        cout << "3. Bet on 1st 12 (1-12)\n";
+        cout << "4. Bet on 2nd 12 (13-24)\n";
+        cout << "5. Bet on 3rd 12 (25-36)\n";
+        cout << "6. Bet on 1st 18 (1-18)\n";
+        cout << "7. Bet on 2nd 18 (19-36)\n";
+        cout << "8. Bet on Even\n";
+        cout << "9. Bet on Odd\n";
+        cout << "Enter your choice (1-9): ";
+        cin >> betType;
         betTypes.push_back(betType);
 
         // For specific number bet
         if (betType == 1) {
             int betNumber;
-            std::cout << "Enter a number to bet on (0-36): ";
-            std::cin >> betNumber;
+            cout << "Enter a number to bet on (0-36): ";
+            cin >> betNumber;
             betNumbers.push_back(betNumber);
         } else {
             betNumbers.push_back(-1);  // -1 for non-specific-number bets
@@ -206,17 +206,17 @@ void playRoulette(int& chips) {
 
         // For Red or Black bet
         if (betType == 2) {
-            std::string betColor;
-            std::cout << "Enter a color to bet on (Red/Black): ";
-            std::cin >> betColor;
+            string betColor;
+            cout << "Enter a color to bet on (Red/Black): ";
+            cin >> betColor;
             betColors.push_back(betColor);
         } else {
             betColors.push_back("");  // Empty string for non-color bets
         }
 
         // Ask if the player wants to place another bet
-        std::cout << "Do you want to place another bet? (y/n): ";
-        std::cin >> addAnotherBet;
+        cout << "Do you want to place another bet? (y/n): ";
+        cin >> addAnotherBet;
 
     } while (addAnotherBet == 'y' || addAnotherBet == 'Y');  // Repeat if 'y' or 'Y'
 
@@ -235,7 +235,7 @@ void playRoulette(int& chips) {
     }
 
     // Output the result of the spin
-    std::cout << "The wheel spun: " << spunNumber << " (" << spunColor << ")" << std::endl;
+    cout << "The wheel spun: " << spunNumber << " (" << spunColor << ")" << endl;
 
     // Payout calculation (keeping structure intact)
     int payout = 0;  // Payout multiplier (will be used to calculate total payout)
@@ -246,7 +246,7 @@ void playRoulette(int& chips) {
     for (size_t i = 0; i < betTypes.size(); i++) {
         int currentBetType = betTypes[i];
         int currentBetNumber = betNumbers[i];
-        std::string currentBetColor = betColors[i];
+        string currentBetColor = betColors[i];
         int currentBetAmount = betAmounts[i];
 
         won = false;
@@ -256,95 +256,95 @@ void playRoulette(int& chips) {
             case 1: // Bet on a specific number (Straight Up)
                 if (currentBetNumber == spunNumber) {
                     payout = 35; // Pays 35 to 1
-                    std::cout << "Congratulations! You win the number bet!" << std::endl;
+                    cout << "Congratulations! You win the number bet!" << endl;
                     won = true;
                 } else {
-                    std::cout << "Sorry, you lost the number bet." << std::endl;
+                    cout << "Sorry, you lost the number bet." << endl;
                 }
                 break;
 
             case 2: // Bet on Red or Black
                 if (currentBetColor == spunColor) {
                     payout = 1; // Pays 1 to 1
-                    std::cout << "Congratulations! You win the color bet!" << std::endl;
+                    cout << "Congratulations! You win the color bet!" << endl;
                     won = true;
                 } else {
-                    std::cout << "Sorry, you lost the color bet." << std::endl;
+                    cout << "Sorry, you lost the color bet." << endl;
                 }
                 break;
 
             case 3: // Bet on 1st 12 (1-12)
                 if (spunNumber >= 1 && spunNumber <= 12) {
                     payout = 2; // Pays 2 to 1
-                    std::cout << "Congratulations! You win the 1st 12 bet!" << std::endl;
+                    cout << "Congratulations! You win the 1st 12 bet!" << endl;
                     won = true;
                 } else {
-                    std::cout << "Sorry, you lost the 1st 12 bet." << std::endl;
+                    cout << "Sorry, you lost the 1st 12 bet." << endl;
                 }
                 break;
 
             case 4: // Bet on 2nd 12 (13-24)
                 if (spunNumber >= 13 && spunNumber <= 24) {
                     payout = 2; // Pays 2 to 1
-                    std::cout << "Congratulations! You win the 2nd 12 bet!" << std::endl;
+                    cout << "Congratulations! You win the 2nd 12 bet!" << endl;
                     won = true;
                 } else {
-                    std::cout << "Sorry, you lost the 2nd 12 bet." << std::endl;
+                    cout << "Sorry, you lost the 2nd 12 bet." << endl;
                 }
                 break;
 
             case 5: // Bet on 3rd 12 (25-36)
                 if (spunNumber >= 25 && spunNumber <= 36) {
                     payout = 2; // Pays 2 to 1
-                    std::cout << "Congratulations! You win the 3rd 12 bet!" << std::endl;
+                    cout << "Congratulations! You win the 3rd 12 bet!" << endl;
                     won = true;
                 } else {
-                    std::cout << "Sorry, you lost the 3rd 12 bet." << std::endl;
+                    cout << "Sorry, you lost the 3rd 12 bet." << endl;
                 }
                 break;
 
             case 6: // Bet on 1st 18 (1-18)
                 if (spunNumber >= 1 && spunNumber <= 18) {
                     payout = 1; // Pays 1 to 1
-                    std::cout << "Congratulations! You win the 1st 18 bet!" << std::endl;
+                    cout << "Congratulations! You win the 1st 18 bet!" << endl;
                     won = true;
                 } else {
-                    std::cout << "Sorry, you lost the 1st 18 bet." << std::endl;
+                    cout << "Sorry, you lost the 1st 18 bet." << endl;
                 }
                 break;
 
             case 7: // Bet on 2nd 18 (19-36)
                 if (spunNumber >= 19 && spunNumber <= 36) {
                     payout = 1; // Pays 1 to 1
-                    std::cout << "Congratulations! You win the 2nd 18 bet!" << std::endl;
+                    cout << "Congratulations! You win the 2nd 18 bet!" << endl;
                     won = true;
                 } else {
-                    std::cout << "Sorry, you lost the 2nd 18 bet." << std::endl;
+                    cout << "Sorry, you lost the 2nd 18 bet." << endl;
                 }
                 break;
 
             case 8: // Bet on Even
                 if (spunNumber != 0 && spunNumber % 2 == 0) {
                     payout = 1; // Pays 1 to 1
-                    std::cout << "Congratulations! You win the Even bet!" << std::endl;
+                    cout << "Congratulations! You win the Even bet!" << endl;
                     won = true;
                 } else {
-                    std::cout << "Sorry, you lost the Even bet." << std::endl;
+                    cout << "Sorry, you lost the Even bet." << endl;
                 }
                 break;
 
             case 9: // Bet on Odd
                 if (spunNumber != 0 && spunNumber % 2 != 0) {
                     payout = 1; // Pays 1 to 1
-                    std::cout << "Congratulations! You win the Odd bet!" << std::endl;
+                    cout << "Congratulations! You win the Odd bet!" << endl;
                     won = true;
                 } else {
-                    std::cout << "Sorry, you lost the Odd bet." << std::endl;
+                    cout << "Sorry, you lost the Odd bet." << endl;
                 }
                 break;
 
             default:
-                std::cout << "Invalid bet type selected!" << std::endl;
+                cout << "Invalid bet type selected!" << endl;
         }
 
         // Calculate total payout for this bet
@@ -355,42 +355,42 @@ void playRoulette(int& chips) {
 
     // Show the total winnings for all bets
     if (totalPayout > 0) {
-        std::cout << "You win a total of $" << totalPayout << "!" << std::endl;
+        cout << "You win a total of $" << totalPayout << "!" << endl;
         chips += totalPayout;  // Add winnings to chips
     } else {
-        std::cout << "Better luck next time!" << std::endl;
+        cout << "Better luck next time!" << endl;
     }
 }
 
 // Baccarat logic (stubbed for now)
 void playBaccarat(int& chips) {
     int bet;
-    std::cout << "How much would you like to bet on Baccarat? ";
-    std::cin >> bet;
+    cout << "How much would you like to bet on Baccarat? ";
+    cin >> bet;
 
     if (bet > chips) {
-        std::cout << "You don't have enough chips for that bet!" << std::endl;
+        cout << "You don't have enough chips for that bet!" << endl;
         return;
     }
 
     // Insert actual Baccarat logic here
-    std::cout << "You played Baccarat. You won the bet!" << std::endl;
+    cout << "You played Baccarat. You won the bet!" << endl;
     chips += bet; // Update chip count (based on actual game result)
 }
 
 // Slots logic (stubbed for now)
 void playSlots(int& chips) {
     int bet;
-    std::cout << "How much would you like to bet on Slots? ";
-    std::cin >> bet;
+    cout << "How much would you like to bet on Slots? ";
+    cin >> bet;
 
     if (bet > chips) {
-        std::cout << "You don't have enough chips for that bet!" << std::endl;
+        cout << "You don't have enough chips for that bet!" << endl;
         return;
     }
 
     // Insert actual Slots logic here
-    std::cout << "You played Slots. You lost the bet!" << std::endl;
+    cout << "You played Slots. You lost the bet!" << endl;
     chips -= bet; // Update chip count (based on actual game result)
 }
 
