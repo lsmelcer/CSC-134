@@ -16,6 +16,7 @@ void playRoulette(int& chips);
 void playBaccarat(int& chips);
 void playSlots(int& chips);
 int spinRouletteWheel();
+auto spinReels();
 
 // Function to display the menu
 void displayMenu() {
@@ -374,11 +375,11 @@ void playBaccarat(int& chips) {
     }
 
     // Insert actual Baccarat logic here
-    cout << "You played Baccarat. You won the bet!" << endl;
-    chips += bet; // Update chip count (based on actual game result)
+    cout << "You played Baccarat. You lost the bet!" << endl;
+    chips -= bet; // Update chip count (based on actual game result)
 }
 
-// Slots logic (stubbed for now)
+// Fixed Slots logic
 void playSlots(int& chips) {
     int bet;
     cout << "How much would you like to bet on Slots? ";
@@ -389,15 +390,40 @@ void playSlots(int& chips) {
         return;
     }
 
-    // Insert actual Slots logic here
-    cout << "You played Slots. You lost the bet!" << endl;
-    chips -= bet; // Update chip count (based on actual game result)
+    // Define the possible symbols on the reels
+    const string symbols[] = {"🍒", "🍋", "🍊", "🍉", "⭐"};
+    const int numSymbols = sizeof(symbols) / sizeof(symbols[0]);
+
+    string reels[3]; // Array to store the results of the spin
+
+    // Spin the reels directly inside playSlots
+    for (int i = 0; i < 3; ++i) {
+        int randomIndex = rand() % numSymbols; // Random index for the symbols array
+        reels[i] = symbols[randomIndex];
+    }
+
+    cout << "Spinning... 🎰" << endl;
+    cout << "Reels: " << reels[0] << " | " << reels[1] << " | " << reels[2] << endl;
+
+    // Check if all three symbols match
+    if (reels[0] == reels[1] && reels[1] == reels[2]) {
+        cout << "Congratulations! You win! 🎉" << endl;
+        chips += bet; // Add winnings (double the bet)
+    } else {
+        cout << "Sorry, no win this time. Better luck next time!" << endl;
+        chips -= bet; // Subtract the bet if the player loses
+    }
+
+    // Display updated chip balance
+    cout << "Your current chip balance is: $" << chips << endl;
 }
 
-int main() {
-    srand(time(0)); // Initialize random number generator for randomness in games
 
-    int chips = getChips();  // Start the game with an initial chip amount
-    playGame(chips);         // Start the main game loop
+// Main function
+int main() {
+    srand(time(0));  // Initialize random seed
+    int chips = getChips();
+    playGame(chips);
+
     return 0;
 }
