@@ -3,6 +3,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
+#include <thread>
+#include <chrono>
+#include <algorithm>
 
 using namespace std;
 
@@ -78,6 +81,76 @@ void playGame(int& chips) {
 
 // Blackjack logic (stubbed for now)
 void playBlackjack(int& chips) {
+    struct Card {
+        string rank;
+        string suit;
+    
+        Card(string r, string s) : rank(r), suit(s) {}
+    
+        string to_string() const {
+            return rank + " of " + suit;
+        }
+    };
+    
+    struct Hand {
+        vector<Card> cards;
+        int value = 0;
+    
+        void add_card(const Card& card) {
+            cards.push_back(card);
+            if (card.rank == "A") value += 11;
+            else if (card.rank == "K" || card.rank == "Q" || card.rank == "J") value += 10;
+            else value += stoi(card.rank);
+        }
+    
+        string to_string() const {
+            string hand_str = "";
+            for (const auto& card : cards) {
+                hand_str += card.to_string() + " ";
+            }
+            return hand_str;
+        }
+    };
+    
+    // Function to shuffle the deck (not implemented here)
+    void shuffle_deck(vector<Card>& deck) {
+        random_shuffle(deck.begin(), deck.end());
+    }
+    
+    // Function to draw a card (not implemented here)
+    Card draw_card(vector<Card>& deck) {
+        Card drawn_card = deck.back();
+        deck.pop_back();
+        return drawn_card;
+    }
+    
+    // Create deck
+    vector<Card> deck;
+    vector<string> ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+    vector<string> suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
+    
+    for (const auto& rank : ranks) {
+        for (const auto& suit : suits) {
+            deck.push_back(Card(rank, suit));
+        }
+    }
+
+    shuffle_deck(deck);
+
+    Hand player_hand, dealer_hand;
+
+    // Deal initial two cards to each
+    player_hand.add_card(draw_card(deck));
+    player_hand.add_card(draw_card(deck));
+
+    dealer_hand.add_card(draw_card(deck));
+    dealer_hand.add_card(draw_card(deck));
+
+    // Display the hands
+    cout << "Dealer's Hand: " << dealer_hand.cards[0].to_string() << " and [Hidden]" << endl;
+    cout << "Player's Hand: " << player_hand.to_string() << "\n" << endl;
+
+    // Ask the player to place a bet
     int bet;
     cout << "How much would you like to bet on Blackjack? ";
     cin >> bet;
@@ -87,10 +160,63 @@ void playBlackjack(int& chips) {
         return;
     }
 
-    // Insert actual Blackjack logic here
-    cout << "You played Blackjack. You lost the bet!" << endl;
-    chips -= bet; // Update chip count (based on actual game result)
+    // Player's turn (example)
+    if (player_hand.value < 21) {
+        char player_choice;
+        cout << "Do you want to draw another card? (y for yes, any key for no): ";
+        cin >> player_choice;
+
+        while (player_choice == 'y' && player_hand.value < 21) {
+            player_hand.add_card(draw_card(deck));
+            cout << "Player's Hand: " << player_hand.to_string() << endl;
+            if (player_hand.value >= 21) break;
+
+            cout << "Do you want to draw another card? (y for yes, any key for no): ";
+            cin >> player_choice;
+        }
+    }
+
+    // At the end of the game, reveal the dealer's second card and determine winner
+    if (player_hand.value <= 21) {
+        cout << "\nDealer's turn..." << endl;
+        cout << "\nDealer's Hand: " << dealer_hand.to_string() << endl;
+        cout << "Player's Hand: " << player_hand.to_string() << endl;
+
+        // Dealer draws if total is below 17
+        while (dealer_hand.value < 17) {
+            cout << "Dealer draws a card..." << endl;
+            dealer_hand.add_card(draw_card(deck));
+            cout << "Dealer's Hand: " << dealer_hand.to_string() << endl;
+            this_thread::sleep_for(chrono::seconds(1));
+        }
+
+        // Determine the outcome
+        if (dealer_hand.value > 21) {
+            this_thread::sleep_for(chrono::seconds(1));
+            cout << "Dealer busts! Player wins!" << endl;
+            chips += bet;  // Player wins the bet
+        } else if (dealer_hand.value > player_hand.value) {
+            this_thread::sleep_for(chrono::seconds(1));
+            cout << "Dealer wins!" << endl;
+            chips -= bet;  // Player loses the bet
+        } else if (dealer_hand.value < player_hand.value) {
+            this_thread::sleep_for(chrono::seconds(1));
+            cout << "Player wins!" << endl;
+            chips += bet;  // Player wins the bet
+        } else {
+            this_thread::sleep_for(chrono::seconds(1));
+            cout << "It's a tie!" << endl;
+        }
+    } else {
+        this_thread::sleep_for(chrono::seconds(1));
+        cout << "Player busts! Dealer wins!" << endl;
+        chips -= bet;  // Player loses the bet
+    }
+
+    // Display updated chip balance
+    cout << "Your current chip balance is: $" << chips << endl;
 }
+
 
 // Craps logic (fixed)
 void playCraps(int& chips) {
