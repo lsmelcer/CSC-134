@@ -19,7 +19,19 @@ void playRoulette(int& chips);
 void playBaccarat(int& chips);
 void playSlots(int& chips);
 int spinRouletteWheel();
-auto spinReels();
+
+// Function to calculate hand value (for Baccarat)
+int calculateHandValue(const vector<int>& hand);
+// Function to draw a card from the deck (for Baccarat)
+int drawCard();
+// Function to print the hand (for Baccarat)
+void printHand(const vector<int>& hand, const string& handName);
+// Function to handle the player's third card decision (for Baccarat)
+void playerDrawCard(vector<int>& playerHand);
+// Function to handle the banker's third card decision (for Baccarat)
+void bankerDrawCard(vector<int>& bankerHand, const vector<int>& playerHand);
+// Function to calculate winnings (for Baccarat)
+double calculateWinnings(double betAmount, const string& result, const string& betChoice);
 
 // Function to display the menu
 void displayMenu() {
@@ -112,12 +124,12 @@ void playBlackjack(int& chips) {
         }
     };
     
-    // Function to shuffle the deck (not implemented here)
+    // Function declaration for shuffle_deck
     void shuffle_deck(vector<Card>& deck) {
         random_shuffle(deck.begin(), deck.end());
     }
     
-    // Function to draw a card (not implemented here)
+    // Function declaration for draw_card
     Card draw_card(vector<Card>& deck) {
         Card drawn_card = deck.back();
         deck.pop_back();
@@ -477,6 +489,8 @@ void playRoulette(int& chips) {
         // Calculate total payout for this bet
         if (won) {
             totalPayout += currentBetAmount * payout;
+        } else {
+            totalPayout -= currentBetAmount; // Subtract the bet amount if lost
         }
     }
 
@@ -486,10 +500,14 @@ void playRoulette(int& chips) {
         chips += totalPayout;  // Add winnings to chips
     } else {
         cout << "Better luck next time!" << endl;
+        chips += totalPayout;  // Subtract losses from chips
     }
+
+    // Display updated chip balance
+    cout << "Your current chip balance is: $" << chips << endl;
 }
 
-// Baccarat logic (stubbed for now)
+// Baccarat logic
 void playBaccarat(int& chips) {
     int bet;
     cout << "How much would you like to bet on Baccarat? ";
@@ -500,9 +518,79 @@ void playBaccarat(int& chips) {
         return;
     }
 
-    // Insert actual Baccarat logic here
-    cout << "You played Baccarat. You lost the bet!" << endl;
-    chips -= bet; // Update chip count (based on actual game result)
+    // Ask the player on which outcome they want to bet
+    string betChoice;
+    cout << "Do you want to bet on Player, Banker, or Tie? ";
+    cin >> betChoice;
+
+    // Ensure valid input
+    while (betChoice != "Player" && betChoice != "Banker" && betChoice != "Tie") {
+        cout << "Invalid choice. Please choose Player, Banker, or Tie: ";
+        cin >> betChoice;
+    }
+
+    vector<int> playerHand;
+    vector<int> bankerHand;
+    
+    // Draw initial two cards for player and banker
+    playerHand.push_back(drawCard());
+    playerHand.push_back(drawCard());
+    bankerHand.push_back(drawCard());
+    bankerHand.push_back(drawCard());
+
+    // Print initial hands
+    printHand(playerHand, "Player");
+    printHand(bankerHand, "Banker");
+
+    // Handle Player's draw based on their total
+    playerDrawCard(playerHand);
+
+    // Print hands after player draw
+    printHand(playerHand, "Player");
+
+    // Handle Banker's draw based on their total and the player's actions
+    bankerDrawCard(bankerHand, playerHand);
+
+    // Print hands after banker draw
+    printHand(bankerHand, "Banker");
+
+    // Calculate the final hand totals
+    int playerTotal = calculateHandValue(playerHand);
+    int bankerTotal = calculateHandValue(bankerHand);
+
+    // Display hand totals
+    cout << "Player Total: " << playerTotal << endl;
+    cout << "Banker Total: " << bankerTotal << endl;
+
+    // Determine the result
+    string result;
+    if (playerTotal > bankerTotal) {
+        result = "Player Wins";
+        cout << "Player Wins!" << endl;
+    } else if (bankerTotal > playerTotal) {
+        result = "Banker Wins";
+        cout << "Banker Wins!" << endl;
+    } else {
+        result = "Tie";
+        cout << "It's a Tie!" << endl;
+    }
+
+    // Calculate winnings or losses
+    double winnings = calculateWinnings(bet, result, betChoice);
+
+    // Update chip count
+    if (result == betChoice || (betChoice == "Player" && result == "Player Wins") || 
+        (betChoice == "Banker" && result == "Banker Wins") || 
+        (betChoice == "Tie" && result == "Tie")) {
+        cout << "You won the bet!" << endl;
+        chips += winnings;
+    } else {
+        cout << "You lost the bet!" << endl;
+        chips -= bet;
+    }
+
+    // Display updated chip balance
+    cout << "Your current chip balance is: $" << chips << endl;
 }
 
 // Fixed Slots logic
@@ -534,7 +622,7 @@ void playSlots(int& chips) {
     // Check if all three symbols match
     if (reels[0] == reels[1] && reels[1] == reels[2]) {
         cout << "Congratulations! You win! 🎉" << endl;
-        chips += bet; // Add winnings (double the bet)
+        chips += bet * 2; // Add winnings (triple the bet)
     } else {
         cout << "Sorry, no win this time. Better luck next time!" << endl;
         chips -= bet; // Subtract the bet if the player loses
@@ -544,6 +632,105 @@ void playSlots(int& chips) {
     cout << "Your current chip balance is: $" << chips << endl;
 }
 
+// Function to calculate hand value (for Baccarat)
+int calculateHandValue(const vector<int>& hand) {
+    int sum = 0;
+    for (int card : hand) {
+        int value = (card % 13) + 1; // Adjust to 1-13 range
+        if (value > 9) value = 0; // 10, J, Q, K are worth 0
+        else if (value == 1) value = 1; // Ace is worth 1
+        sum += value;
+    }
+    return sum % 10; // Baccarat value is modulo 10
+}
+
+// Function to draw a card from the deck (for Baccarat)
+int drawCard() {
+    return rand() % 52; // 52 cards in a deck
+}
+
+// Function to print the hand (for Baccarat)
+void printHand(const vector<int>& hand, const string& handName) {
+    cout << handName << " Hand: ";
+    for (int card : hand) {
+        int cardValue = (card % 13) + 1;
+        if (cardValue == 11) cout << "J ";
+        else if (cardValue == 12) cout << "Q ";
+        else if (cardValue == 13) cout << "K ";
+        else if (cardValue == 1) cout << "A ";
+        else cout << cardValue << " ";
+    }
+    cout << endl;
+}
+
+// Function to handle the player's third card decision (for Baccarat)
+void playerDrawCard(vector<int>& playerHand) {
+    int playerTotal = calculateHandValue(playerHand);
+    if (playerTotal <= 5) { // Player draws a card if total is 5 or less
+        cout << "Player draws a third card." << endl;
+        playerHand.push_back(drawCard());
+    } else {
+        cout << "Player stands." << endl;
+    }
+}
+
+// Function to handle the banker's third card decision (for Baccarat)
+void bankerDrawCard(vector<int>& bankerHand, const vector<int>& playerHand) {
+    int bankerTotal = calculateHandValue(bankerHand);
+    
+    if (bankerTotal >= 7) {
+        cout << "Banker stands." << endl;
+    } else if (bankerTotal <= 2) {
+        cout << "Banker draws a third card." << endl;
+        bankerHand.push_back(drawCard());
+    } else if (playerHand.size() == 2) { // Player didn't draw a third card
+        if (bankerTotal <= 5) {
+            cout << "Banker draws a third card." << endl;
+            bankerHand.push_back(drawCard());
+        } else {
+            cout << "Banker stands." << endl;
+        }
+    } else { // Player drew a third card
+        int playerThirdCard = playerHand[2] % 13;
+        bool bankerShouldDraw = false;
+        
+        if (bankerTotal == 3) {
+            bankerShouldDraw = (playerThirdCard != 8);
+        } else if (bankerTotal == 4) {
+            bankerShouldDraw = (playerThirdCard >= 2 && playerThirdCard <= 7);
+        } else if (bankerTotal == 5) {
+            bankerShouldDraw = (playerThirdCard >= 4 && playerThirdCard <= 7);
+        } else if (bankerTotal == 6) {
+            bankerShouldDraw = (playerThirdCard >= 6 && playerThirdCard <= 7);
+        }
+        
+        if (bankerShouldDraw) {
+            cout << "Banker draws a third card." << endl;
+            bankerHand.push_back(drawCard());
+        } else {
+            cout << "Banker stands." << endl;
+        }
+    }
+}
+
+// Function to calculate winnings (for Baccarat)
+double calculateWinnings(double betAmount, const string& result, const string& betChoice) {
+    double winnings = 0;
+    if (betChoice == "Player") {
+        if (result == "Player Wins") {
+            winnings = betAmount;
+        }
+    } else if (betChoice == "Banker") {
+        if (result == "Banker Wins") {
+            winnings = betAmount * 0.95; // Banker win pays 1:1 minus 5% commission
+        }
+    } else if (betChoice == "Tie") {
+        if (result == "Tie") {
+            winnings = betAmount * 8; // Tie pays 8:1
+        }
+    }
+    return winnings;
+}
 
 // Main function
 int main() {
