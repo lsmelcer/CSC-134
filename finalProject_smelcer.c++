@@ -91,30 +91,50 @@ void playGame(int& chips) {
     }
 }
 
-// Blackjack logic (stubbed for now)
+struct Card {
+    string rank;
+    string suit;
+
+    Card(string r, string s) : rank(r), suit(s) {}
+
+    string to_string() const {
+        return rank + " of " + suit;
+    }
+};
+
+// ===== Shuffle Deck Function =====
+void shuffle_deck(vector<Card>& deck) {
+    random_shuffle(deck.begin(), deck.end());
+}
+
+// ===== Draw Card Function =====
+Card draw_card(vector<Card>& deck) {
+    Card drawn_card = deck.back();
+    deck.pop_back();
+    return drawn_card;
+}
+
 void playBlackjack(int& chips) {
-    struct Card {
-        string rank;
-        string suit;
-    
-        Card(string r, string s) : rank(r), suit(s) {}
-    
-        string to_string() const {
-            return rank + " of " + suit;
-        }
-    };
+    int bet;
+    cout << "How much would you like to bet on Blackjack? ";
+    cin >> bet;
+
+    if (bet > chips) {
+        cout << "You don't have enough chips for that bet!" << endl;
+        return;
+    }
     
     struct Hand {
         vector<Card> cards;
         int value = 0;
-    
+
         void add_card(const Card& card) {
             cards.push_back(card);
             if (card.rank == "A") value += 11;
             else if (card.rank == "K" || card.rank == "Q" || card.rank == "J") value += 10;
             else value += stoi(card.rank);
         }
-    
+
         string to_string() const {
             string hand_str = "";
             for (const auto& card : cards) {
@@ -123,24 +143,11 @@ void playBlackjack(int& chips) {
             return hand_str;
         }
     };
-    
-    // Function declaration for shuffle_deck
-    void shuffle_deck(vector<Card>& deck) {
-        random_shuffle(deck.begin(), deck.end());
-    }
-    
-    // Function declaration for draw_card
-    Card draw_card(vector<Card>& deck) {
-        Card drawn_card = deck.back();
-        deck.pop_back();
-        return drawn_card;
-    }
-    
-    // Create deck
+
     vector<Card> deck;
     vector<string> ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
     vector<string> suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
-    
+
     for (const auto& rank : ranks) {
         for (const auto& suit : suits) {
             deck.push_back(Card(rank, suit));
@@ -158,74 +165,113 @@ void playBlackjack(int& chips) {
     dealer_hand.add_card(draw_card(deck));
     dealer_hand.add_card(draw_card(deck));
 
-    // Display the hands
     cout << "Dealer's Hand: " << dealer_hand.cards[0].to_string() << " and [Hidden]" << endl;
     cout << "Player's Hand: " << player_hand.to_string() << "\n" << endl;
 
-    // Ask the player to place a bet
-    int bet;
-    cout << "How much would you like to bet on Blackjack? ";
-    cin >> bet;
+    bool split = false;
+    Hand hand1 = player_hand, hand2;
+    int second_bet = bet;
 
-    if (bet > chips) {
-        cout << "You don't have enough chips for that bet!" << endl;
-        return;
-    }
+    if (player_hand.cards.size() == 2 &&
+        player_hand.cards[0].rank == player_hand.cards[1].rank &&
+        chips >= bet * 2) {
 
-    // Player's turn (example)
-    if (player_hand.value < 21) {
-        char player_choice;
-        cout << "Do you want to draw another card? (y for yes, any key for no): ";
-        cin >> player_choice;
+        char split_choice;
+        cout << "You have two cards of the same rank. Do you want to split? (y/n): ";
+        cin >> split_choice;
 
-        while (player_choice == 'y' && player_hand.value < 21) {
-            player_hand.add_card(draw_card(deck));
-            cout << "Player's Hand: " << player_hand.to_string() << endl;
-            if (player_hand.value >= 21) break;
+        if (split_choice == 'y' || split_choice == 'Y') {
+            split = true;
+            chips -= bet; // Deduct second bet
+            hand1.cards.pop_back();  // Keep first card in hand1
+            hand2.add_card(player_hand.cards[1]); // Move second card to new hand
 
-            cout << "Do you want to draw another card? (y for yes, any key for no): ";
-            cin >> player_choice;
+            hand1.value = 0;
+            hand1.add_card(player_hand.cards[0]);
+            hand1.add_card(draw_card(deck));
+
+            hand2.add_card(draw_card(deck));
+            cout << "\nSplit complete. Now playing each hand separately." << endl;
         }
     }
-
-    // At the end of the game, reveal the dealer's second card and determine winner
-    if (player_hand.value <= 21) {
-        cout << "\nDealer's turn..." << endl;
-        cout << "\nDealer's Hand: " << dealer_hand.to_string() << endl;
-        cout << "Player's Hand: " << player_hand.to_string() << endl;
-
-        // Dealer draws if total is below 17
-        while (dealer_hand.value < 17) {
-            cout << "Dealer draws a card..." << endl;
-            dealer_hand.add_card(draw_card(deck));
-            cout << "Dealer's Hand: " << dealer_hand.to_string() << endl;
-            this_thread::sleep_for(chrono::seconds(1));
+    
+    // Lambda to let player play a hand
+auto play_hand = [&](Hand& hand, string label) {
+    cout << "\n" << label << " - " << hand.to_string() << endl;
+    if (hand.value < 21) {
+        char choice;
+        cout << "Draw another card for " << label << "? (y/n): ";
+        cin >> choice;
+        while (choice == 'y' && hand.value < 21) {
+            hand.add_card(draw_card(deck));
+            cout << label << ": " << hand.to_string() << endl;
+            if (hand.value >= 21) break;
+            cout << "Draw again for " << label << "? (y/n): ";
+            cin >> choice;
         }
+    }
+};
 
-        // Determine the outcome
-        if (dealer_hand.value > 21) {
-            this_thread::sleep_for(chrono::seconds(1));
-            cout << "Dealer busts! Player wins!" << endl;
-            chips += bet;  // Player wins the bet
-        } else if (dealer_hand.value > player_hand.value) {
-            this_thread::sleep_for(chrono::seconds(1));
-            cout << "Dealer wins!" << endl;
-            chips -= bet;  // Player loses the bet
-        } else if (dealer_hand.value < player_hand.value) {
-            this_thread::sleep_for(chrono::seconds(1));
-            cout << "Player wins!" << endl;
-            chips += bet;  // Player wins the bet
+// Play hands based on whether the player split
+if (split) {
+    play_hand(hand1, "Hand 1");
+    play_hand(hand2, "Hand 2");
+} else {
+    play_hand(player_hand, "Player's Hand");
+}
+
+
+    // Dealer's turn if at least one player hand is valid
+if ((split && (hand1.value <= 21 || hand2.value <= 21)) || (!split && player_hand.value <= 21)) {
+    cout << "\nDealer's turn..." << endl;
+    cout << "Dealer's Hand: " << dealer_hand.to_string() << endl;
+
+    while (dealer_hand.value < 17) {
+        cout << "Dealer draws a card..." << endl;
+        dealer_hand.add_card(draw_card(deck));
+        cout << "Dealer's Hand: " << dealer_hand.to_string() << endl;
+        this_thread::sleep_for(chrono::seconds(1));
+    }
+
+    // Lambda to compare a hand vs dealer
+    auto resolve = [&](Hand& hand, const string& label, int& current_chips) {
+        if (hand.value > 21) {
+            cout << label << " busts! Dealer wins that hand." << endl;
+            current_chips -= bet;
+        } else if (dealer_hand.value > 21 || hand.value > dealer_hand.value) {
+            cout << label << " wins!" << endl;
+            current_chips += bet;
+        } else if (hand.value < dealer_hand.value) {
+            cout << label << " loses." << endl;
+            current_chips -= bet;
         } else {
-            this_thread::sleep_for(chrono::seconds(1));
-            cout << "It's a tie!" << endl;
+            cout << label << " ties with dealer." << endl;
+        }
+    };
+
+    if (split) {
+        resolve(hand1, "Hand 1", chips);
+        resolve(hand2, "Hand 2", chips);
+    } else {
+        resolve(player_hand, "Player", chips);
+    }
+} else {
+    if (split) {
+        if (hand1.value > 21) {
+            cout << "Hand 1 busts!" << endl;
+            chips -= bet;
+        }
+        if (hand2.value > 21) {
+            cout << "Hand 2 busts!" << endl;
+            chips -= bet;
         }
     } else {
-        this_thread::sleep_for(chrono::seconds(1));
         cout << "Player busts! Dealer wins!" << endl;
-        chips -= bet;  // Player loses the bet
+        chips -= bet;
     }
+}
 
-    // Display updated chip balance
+
     cout << "Your current chip balance is: $" << chips << endl;
 }
 
