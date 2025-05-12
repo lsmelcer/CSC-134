@@ -1,9 +1,9 @@
 
 # Diamond Shores Casino
 ### A Multi-Game Virtual Casino in C++  
-**Presented by:** [Your Name]  
-**Course/Project:** [Class or Project Name]  
-**Date:** [Date]
+**Presented by:** [Louis Smelcer]  
+**Course/Project:** [C++ Final Project]  
+**Date:** [5/14/2025]
 
 ---
 
