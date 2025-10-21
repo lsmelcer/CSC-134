@@ -16,3 +16,10 @@ for i in range(1, N + 1):
 
     # Move to the next line
     print()
+
+"""
+This program solves the problem of printing a palindromic triangle of size N, where each row is a number 
+pattern that reads the same forward and backward. For each row number i, the program first prints numbers 
+from 1 to i, then prints numbers from i-1 back down to 1. This forms a symmetric (palindromic) number 
+pattern. Using nested loops, the program builds and prints each line, fulfilling the requirement exactly.
+"""
